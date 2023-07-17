@@ -1,0 +1,32 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filter %}
+
+{% block title %}
+NewsList
+{% endblock title %}
+
+{% block content %}
+   <h1>Все новости ({{ newslist|length }} шт.)</h1>
+
+   <hr>
+   {% if newslist %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Содержание (первые 20 символов текста)</td>
+           </tr>
+
+           {% for news in newslist %}
+           <tr>
+               <td><a href="/news/{{ news.pk }}">{{ news.post_title|truncatewords:7|censor }}</a></td>
+               <td>{{ news.post_date|date:'d.M.Y h:i:s' }}</td>
+               <td>{{ news.post_text|truncatechars:20|censor }}</td>
+           </tr>
+           {% endfor %}
+       </table>
+   {% else %}
+       <h2>Новостей нет!</h2>
+   {% endif %}
+{% endblock content %}

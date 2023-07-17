@@ -1,0 +1,16 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filter %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+<h1>Детальная информация</h1>
+<hr>
+<h4>Заголовок: {{ news.post_title|censor }}</h4>
+<h4>Дата публикации: {{ news.post_date|date:'d.M.Y h:i:s' }}</h4>
+<h4>Полный текст: {{ news.post_text|censor }}</h4>
+{% endblock content %}

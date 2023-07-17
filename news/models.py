@@ -29,6 +29,9 @@ class Author(models.Model):
 class Category(models.Model):
     category_name = models.CharField(max_length=128, unique=True)
 
+    def __str__(self):
+        return self.category_name.title()
+
 
 class Post(models.Model):
     news = 'NW'
@@ -59,6 +62,11 @@ class Post(models.Model):
 
     def preview(self):
         return self.post_text[0:123] + "..." if len(str(self.post_text)) > 124 else self.post_text
+
+    def __str__(self):
+        return f'{self.post_title.title()} :: ' \
+               f'{self.post_date.strftime("%d.%m.%Y %H:%M:%S")} :: ' \
+               f'{self.post_text[0:123] + "..." if len(str(self.post_text)) > 124 else self.post_text}'
 
 
 class PostCategory(models.Model):
