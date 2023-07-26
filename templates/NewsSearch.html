@@ -3,11 +3,16 @@
 {% load custom_filter %}
 
 {% block title %}
-NewsList
+NewsSearch
 {% endblock title %}
 
 {% block content %}
-   <h1>Новости (на странице: {{ newslist|length }} шт.)</h1>
+   <h1>Поиск новостей</h1>
+
+<form action="" method="get">
+   {{ filterset.form.as_p }}
+   <input type="submit" value="Найти" />
+</form>
 
    <hr>
    {% if newslist %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -67,6 +68,9 @@ class Post(models.Model):
         return f'{self.post_title.title()} :: ' \
                f'{self.post_date.strftime("%d.%m.%Y %H:%M:%S")} :: ' \
                f'{self.post_text[0:123] + "..." if len(str(self.post_text)) > 124 else self.post_text}'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 
 class PostCategory(models.Model):
