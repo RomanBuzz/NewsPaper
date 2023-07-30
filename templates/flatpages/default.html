@@ -28,11 +28,6 @@
                        <li class="nav-item">
                            <a class="nav-link" href="/admin/">Админ панель</a>
                        </li>
-                       <li class="nav-item active">
-                           <a class="nav-link" href="#">Наверх
-                               <span class="sr-only">(текущая)</span>
-                           </a>
-                       </li>
                        <li class="nav-item">
                            <a class="nav-link" href="/">Главная</a>
                        </li>
@@ -42,11 +37,19 @@
                        <li class="nav-item">
                            <a class="nav-link" href="/news/search/">Поиск новостей</a>
                        </li>
+                       {% if perms.news.add_post %}
+                           <li class="nav-item">
+                               <a class="nav-link" href="{% url 'news_create' %}">Написать новость</a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href="{% url 'articles_create' %}">Написать статью</a>
+                           </li>
+                       {% endif %}
                        <li class="nav-item">
-                           <a class="nav-link" href="/news/create/">Написать новость</a>
+                           <a class="nav-link" href="/accounts/login/">login</a>
                        </li>
                        <li class="nav-item">
-                           <a class="nav-link" href="/articles/create/">Написать статью</a>
+                           <a class="nav-link" href="/accounts/logout/">logout</a>
                        </li>
                    </ul>
                </div>

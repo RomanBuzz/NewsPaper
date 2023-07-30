@@ -23,7 +23,11 @@ NewsSearch
                <td>Тип публикации</td>
                <td>Категория</td>
                <td>Краткое содержание</td>
-               <td>Управление</td>
+               <td>
+                   {% if perms.news.change_post or perms.news.delete_post %}
+                       Управление
+                   {% endif %}
+               </td>
            </tr>
 
            {% for news in newslist %}
@@ -38,12 +42,20 @@ NewsSearch
                </td>
                <td>{{ news.post_text|truncatechars:20|censor }}</td>
                <td>
-                   {% if news.post_type == 'NW' %}
-                        <a href="/news/{{ news.pk }}/edit">Редактировать</a>
-                        <a href="/news/{{ news.pk }}/delete">Удалить</a>
+                    {% if news.post_type == 'NW' %}
+                        {% if perms.news.change_post and request.user == news.post_author.author_user %}
+                            <a href="{% url 'news_edit' news.pk %}">Редактировать</a>
+                        {% endif %}
+                        {% if perms.news.delete_post %}
+                            <a href="{% url 'news_delete' news.pk %}">Удалить</a>
+                        {% endif %}
                     {% else %}
-                        <a href="/articles/{{ news.pk }}/edit">Редактировать</a>
-                        <a href="/articles/{{ news.pk }}/delete">Удалить</a>
+                        {% if perms.news.change_post and request.user == news.post_author.author_user %}
+                            <a href="{% url 'articles_edit' news.pk %}">Редактировать</a>
+                        {% endif %}
+                        {% if perms.news.delete_post %}
+                            <a href="{% url 'articles_delete' news.pk %}">Удалить</a>
+                        {% endif %}
                     {% endif %}
                </td>
            </tr>

@@ -26,6 +26,9 @@ class Author(models.Model):
         self.author_rating = post_rat * 3 + comment_rat + post_comment_rat
         self.save()
 
+    def __str__(self):
+        return f'{self.author_user} (rat. {self.author_rating})'
+
 
 class Category(models.Model):
     category_name = models.CharField(max_length=128, unique=True)
@@ -43,14 +46,15 @@ class Post(models.Model):
         (article, 'Статья')
     ]
 
-    post_author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    post_type = models.CharField(max_length=2,
+    post_author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Автор")
+    post_type = models.CharField("Тип",
+                                 max_length=2,
                                  choices=CATEGORIES,
                                  default=news)
-    post_date = models.DateTimeField(auto_now_add=True)
-    post_category = models.ManyToManyField(Category, through='PostCategory')
-    post_title = models.CharField(max_length=128)
-    post_text = models.TextField()
+    post_date = models.DateTimeField("Дата публикации", auto_now_add=True)
+    post_category = models.ManyToManyField(Category, through='PostCategory', verbose_name="Категория")
+    post_title = models.CharField("Название", max_length=128)
+    post_text = models.TextField("Текст")
     post_rating = models.IntegerField(default=0)
 
     def like(self):

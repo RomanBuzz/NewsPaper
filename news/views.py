@@ -1,4 +1,6 @@
-from .models import Post
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
+from .models import Post, Author
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy
@@ -39,7 +41,8 @@ class NewsDetail(DetailView):
     context_object_name = 'news'
 
 
-class NewsCreate(CreateView):
+class NewsCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
@@ -47,10 +50,16 @@ class NewsCreate(CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.post_type = "NW"
+        try:
+            auth = Author.objects.get(author_user=self.request.user)
+        except ObjectDoesNotExist:
+            auth = Author.objects.create(author_user=self.request.user)
+        post.post_author = auth
         return super().form_valid(form)
 
 
-class ArticlesCreate(CreateView):
+class ArticlesCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'
@@ -58,28 +67,39 @@ class ArticlesCreate(CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.post_type = "AR"
+        try:
+            auth = Author.objects.get(author_user=self.request.user)
+        except ObjectDoesNotExist:
+            auth = Author.objects.create(author_user=self.request.user)
+        post.post_author = auth
         return super().form_valid(form)
 
 
-class NewsEdit(UpdateView):
+class NewsEdit(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'news_edit.html'
+    context_object_name = 'news'
 
 
-class ArticlesEdit(UpdateView):
+class ArticlesEdit(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'articles_edit.html'
+    context_object_name = 'news'
 
 
-class NewsDelete(DeleteView):
+class NewsDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'news_delete.html'
     success_url = reverse_lazy('post_list')
 
 
-class ArticlesDelete(DeleteView):
+class ArticlesDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'articles_delete.html'
     success_url = reverse_lazy('post_list')
