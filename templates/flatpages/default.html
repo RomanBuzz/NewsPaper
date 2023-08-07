@@ -26,16 +26,13 @@
                <div class="collapse navbar-collapse" id="navbarResponsive">
                    <ul class="navbar-nav ml-auto">
                        <li class="nav-item">
-                           <a class="nav-link" href="/admin/">Админ панель</a>
-                       </li>
-                       <li class="nav-item">
                            <a class="nav-link" href="/">Главная</a>
                        </li>
                        <li class="nav-item">
                            <a class="nav-link" href="/news/">Новости</a>
                        </li>
                        <li class="nav-item">
-                           <a class="nav-link" href="/news/search/">Поиск новостей</a>
+                           <a class="nav-link" href="/news/search/">Поиск</a>
                        </li>
                        {% if perms.news.add_post %}
                            <li class="nav-item">
@@ -45,12 +42,18 @@
                                <a class="nav-link" href="{% url 'articles_create' %}">Написать статью</a>
                            </li>
                        {% endif %}
-                       <li class="nav-item">
-                           <a class="nav-link" href="/accounts/login/">login</a>
-                       </li>
-                       <li class="nav-item">
-                           <a class="nav-link" href="/accounts/logout/">logout</a>
-                       </li>
+                       {% if not request.user.is_authenticated %}
+                           <li class="nav-item">
+                               <a class="nav-link" href="/accounts/login/">Войти</a>
+                           </li>
+                       {% else %}
+                           <li class="nav-item">
+                               <a class="nav-link" href="{% url 'subscriptions' %}">Мои подписки</a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/accounts/logout/">Выйти ({{ request.user }})</a>
+                           </li>
+                       {% endif %}
                    </ul>
                </div>
            </div>
