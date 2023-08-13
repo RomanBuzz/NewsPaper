@@ -11,6 +11,7 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView
 )
+from django.core.cache import cache
 
 
 class NewsList(ListView):
@@ -19,6 +20,21 @@ class NewsList(ListView):
     template_name = 'NewsList.html'
     context_object_name = 'newslist'
     paginate_by = 10
+
+    def get_queryset(self):
+        queryset = cache.get('news_list', None)
+        # if queryset:
+        #     print('test 11:', queryset[0])
+        # else:
+        #     print('test 11:', queryset)
+
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('news_list', queryset)
+            queryset = cache.get('news_list', None)
+            # print('test 22:', queryset[0])
+
+        return queryset
 
 
 class NewsSearch(ListView):
@@ -43,6 +59,19 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'NewsDetail.html'
     context_object_name = 'news'
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'news-{self.kwargs["pk"]}', None)
+        # print('test 1:', obj)
+
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'news-{self.kwargs["pk"]}', obj)
+            obj = cache.get(f'news-{self.kwargs["pk"]}', None)
+            # print('test 2:', obj)
+
+        return obj
 
 
 class NewsCreate(PermissionRequiredMixin, CreateView):

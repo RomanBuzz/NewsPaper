@@ -7,7 +7,7 @@ NewsList
 {% endblock title %}
 
 {% block content %}
-   <h1>Новости (на странице: {{ newslist|length }} шт.)</h1>
+   <h1>Новости (Стр. {{ page_obj.number }}/{{ page_obj.paginator.num_pages }} | публикаций: {{ newslist|post_len }})</h1>
 
    <hr>
    {% if newslist %}

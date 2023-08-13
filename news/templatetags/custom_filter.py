@@ -1,4 +1,5 @@
 from django import template
+from news.models import Post
 
 
 register = template.Library()
@@ -29,3 +30,10 @@ def url_replace(context, **kwargs):
    for k, v in kwargs.items():
        d[k] = v
    return d.urlencode()
+
+
+@register.filter()
+def post_len(value):
+    page_value = str(len(value))
+    total_value = str(len(Post.objects.all()))
+    return f' {page_value} из {total_value}'
