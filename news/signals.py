@@ -11,15 +11,13 @@ def post_created(instance, created, **kwargs):
     if not created:
         return
 
-    # print('test 1:', instance.post.post_title, '||', instance.post.get_post_type_display(), '||',
-    #       instance.category, '||',  instance.post.get_absolute_url())
-
     emails = list(User.objects.filter(
         subscriptions__category=instance.category
     ).values_list('email', flat=True).distinct())
 
-    send_msg.delay(instance.category.category_name, instance.post.post_title,
-                   instance.post.get_post_type_display(), instance.post.get_absolute_url(), emails)
+    if len(emails) > 0:
+        send_msg.delay(instance.category.category_name, instance.post.post_title,
+                       instance.post.get_post_type_display(), instance.post.get_absolute_url(), emails)
 
 
 @receiver(m2m_changed, sender=Post.post_category.through)
@@ -33,8 +31,6 @@ def category_saved(instance, action, **kwargs):
         subscriptions__category__in=instance.post_category.all()
     ).values_list('email', flat=True).distinct())
 
-    # print('test 2:', instance.post_title, '||', instance.get_post_type_display(), '||',
-    #       category_str, '||', instance.get_absolute_url(), emails)
-
-    send_msg.delay(category_str, instance.post_title, instance.get_post_type_display(),
-                   instance.get_absolute_url(), emails)
+    if len(emails) > 0:
+        send_msg.delay(category_str, instance.post_title, instance.get_post_type_display(),
+                       instance.get_absolute_url(), emails)

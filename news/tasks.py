@@ -38,8 +38,6 @@ def news_send():
         user_category = Category.objects.filter(pk__in=user.subscriptions.all().values_list('category', flat=True))
         user_cat_str = '|'.join(user_category.values_list('category_name', flat=True))
 
-        # print('test 3: ', user.username, '||', user_category, '||', user_cat_str)
-
         request_period = datetime.now() - timedelta(days=14)
 
         news = Post.objects.exclude(mailings__user=user).filter(
@@ -48,8 +46,6 @@ def news_send():
         ).distinct().order_by('-post_date')
 
         if len(news) > 0:
-
-            # print('test 4: ', user.username, '||', news.values_list('post_title', flat=True))
 
             subject = f'Новые публикации в категории {user_cat_str}'
             text_content = f'Новые публикации в категории {user_cat_str}:\n'
