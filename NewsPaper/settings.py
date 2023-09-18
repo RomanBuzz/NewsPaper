@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'NewsPaper.urls'
@@ -160,6 +161,10 @@ USE_I18N = True
 
 USE_TZ = False
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -219,13 +224,25 @@ LOGGING = {
         },
     },
     'handlers': {
-        'debug': {
+        'debug_console': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'debug'
         },
-        'file': {
+        'warning_console': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warning'
+        },
+        'error_console': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'error'
+        },
+        'general_file': {
             'level': 'INFO',
             'filters': ['require_debug_false'],
             'class': 'logging.FileHandler',
@@ -238,13 +255,13 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'warning'
         },
-        'error': {
+        'error_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': 'errors.log',
             'formatter': 'error'
         },
-        'security': {
+        'security_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': 'security.log',
@@ -253,32 +270,32 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['debug', 'file'],
+            'handlers': ['debug_console', 'warning_console', 'error_console', 'general_file'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['file', 'error', 'mail_admins'],
+            'handlers': ['general_file', 'error_file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'django.server': {
-            'handlers': ['error', 'mail_admins'],
+            'handlers': ['error_file', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
         'django.template': {
-            'handlers': ['error'],
+            'handlers': ['error_file'],
             'level': 'ERROR',
             'propagate': True,
         },
         'django.db.backends': {
-            'handlers': ['error'],
+            'handlers': ['error_file'],
             'level': 'ERROR',
             'propagate': True,
         },
         'django.security': {
-            'handlers': ['security'],
+            'handlers': ['security_file'],
             'level': 'INFO',
             'propagate': True,
         },
